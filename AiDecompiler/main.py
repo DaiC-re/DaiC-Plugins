@@ -18,5 +18,5 @@ def ai_generator(bv):
     ) # Generate a completion, can also call create_completion
     print(output)
 DaiCCore.register("AiDecompiler", "call decompiler model with llama_cpp", ai_generator)
-a = DaiCCore.get_valid_list()
+# a = DaiCCore.get_valid_list()
 # a[2](1)
