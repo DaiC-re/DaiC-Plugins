@@ -1,15 +1,15 @@
 from llama_cpp import Llama
-import DaiCRegister
+import DaiCCore
 
 def ai_generator(bv):
-    model_path=DaiCRegister.get_str()
+    model_path=DaiCCore.get_str()
     llm = Llama(
           model_path,
           # n_gpu_layers=-1, # Uncomment to use GPU acceleration
           # seed=1337, # Uncomment to set a specific seed
           # n_ctx=2048, # Uncomment to increase the context window
     )
-    input = DaiCRegister.get_str()
+    input = DaiCCore.get_str()
     output = llm(
             input,
           max_tokens=32, # Generate up to 32 tokens, set to None to generate up to the end of the context window
@@ -17,6 +17,6 @@ def ai_generator(bv):
           echo=True # Echo the prompt back in the output
     ) # Generate a completion, can also call create_completion
     print(output)
-DaiCRegister.register("AiDecompiler", "call decompiler model with llama_cpp", ai_generator)
-a = DaiCRegister.get_valid_list()
+DaiCCore.register("AiDecompiler", "call decompiler model with llama_cpp", ai_generator)
+a = DaiCCore.get_valid_list()
 # a[2](1)
