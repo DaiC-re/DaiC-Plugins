@@ -1,8 +1,8 @@
 from llama_cpp import Llama
 import DaiCCore
 
-def ai_generator(bv):
-    model_path=DaiCCore.get_str()
+def ai_generator():
+    model_path = DaiCCore.get_file()
     llm = Llama(
           model_path,
           # n_gpu_layers=-1, # Uncomment to use GPU acceleration
