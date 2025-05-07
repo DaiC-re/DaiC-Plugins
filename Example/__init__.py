@@ -6,6 +6,7 @@ def example():
     #     print("test toolBar")
     # DaiCCore.add_to_tool("test2", print_test)
     # file = DaiCCore.get_file()
+    print("Executing example")
     pass
 
 DaiCCore.register("Example", "Example plugin", example)
