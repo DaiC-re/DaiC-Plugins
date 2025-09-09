@@ -7,8 +7,11 @@ def example():
     # DaiCCore.add_to_tool("test2", print_test)
     # file = DaiCCore.get_file()
     # print (file)
-    imports = DaiCCore.get_imports()
-    print(imports)
+    # imports = DaiCCore.get_imports()
+    # print(imports)
+    def f(a):
+        print(a)
+    DaiCCore.connect_functions_table(f)
 
 
 DaiCCore.register("Example", "Example plugin", example)
