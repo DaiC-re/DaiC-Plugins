@@ -9,9 +9,9 @@ def example():
     # print (file)
     # imports = DaiCCore.get_imports()
     # print(imports)
-    def f(a):
-        print(a)
-    DaiCCore.connect_functions_table(f)
-
+    # def f(a):
+    #     print(a)
+    # DaiCCore.connect_functions_table(f)
+    print("Example plugin")
 
 DaiCCore.register("Example", "Example plugin", example)
