@@ -1,6 +1,4 @@
 import DaiCCore  # this is your pybind11 module that exposes Plugin
-import sys
-
 
 class Example(DaiCCore.Plugin):
     name = "InfoPrinter"
@@ -10,7 +8,6 @@ class Example(DaiCCore.Plugin):
 
     def init(self):
         print(f"[{self.name}] Initialized successfully!")
-        
 
     def run(self):
         print("--- Plugin Information ---")
