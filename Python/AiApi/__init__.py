@@ -1,7 +1,6 @@
 from openai import OpenAI
 import DaiCCore
 
-
 def ai_generator():
     base_url = DaiCCore.input_dialog("url")
     api_key = DaiCCore.input_dialog("api_key"),

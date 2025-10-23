@@ -1,12 +1,12 @@
 from typing import Any
 import httpx
-from mcp.server.fastmcp import FastMCP
+# from mcp.server.fastmcp import FastMCP
 import DaiCCore
 
 # Initialize FastMCP server
-mcp = FastMCP("daic")
+# mcp = FastMCP("daic")
 
-@mcp.tool()
+# @mcp.tool()
 def open_alert() -> None:
     """
     Open an alert in daic
