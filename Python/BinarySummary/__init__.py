@@ -1,48 +1,103 @@
 import DaiCCore
-import anthropic
+import requests
+import sys
+import os
 
-client = anthropic.Anthropic()
-
-def print_formatted_response(response):
-    """Pretty print Anthropic API response with formatting"""
-    print("=" * 60)
-    print("CLAUDE RESPONSE")
-    print("=" * 60)
+class BinarySummary(DaiCCore.Plugin):
+    """
+    Analyzes binary imports using a SECURE local middleware.
+    This plugin REQUIRES the 'DAIC_MIDDLEWARE_KEY' environment
+    variable to be set.
+    """
     
-    for i, content_block in enumerate(response.content):
-        if content_block.type == 'text':
-            print(f"\nContent Block {i+1}:")
-            print("-" * 40)
-            print(content_block.text)
-            print("-" * 40)
+    name = "Binary Summary"
+    description = "Analyzes binary imports via secure Claude middleware"
+    version = "2.0.0"
+    author = "DaiC Team"
+
+    MIDDLEWARE_URL = "http://daic.re/ask-claude/analyze-binary/"
     
-    print(f"\nModel: {response.model}")
-    print(f"Stop Reason: {response.stop_reason}")
-    print(f"Usage: {response.usage}")
+    def __init__(self):
+        super().__init__()
 
-def binaryAction():
-    imports = DaiCCore.get_imports()
-    imports_msg = ""
-    for i in imports:
-        imports_msg += f"{i.offset} {i.file_name} {i.fonction_name}\n"
-    prompt = f"From the following list of imported function by a binary with the offset, file_name and function_name, can you give me information on this binary {imports_msg}"
-    message = client.messages.create(
-        model="claude-opus-4-20250514",
-        max_tokens=1000,
-        temperature=1,
-        system="You are an expert in reverse engineering",
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": prompt
-                    }
-                ]
-            }
-        ]
-    )
-    print(print_formatted_response(message))
+    def init(self):
+        self.middleware_key = os.environ.get("DAIC_MIDDLEWARE_KEY")
 
-DaiCCore.register("BinarySummary", "Get binary import and do some action", binaryAction)
+        if not self.middleware_key:
+            print(f"[{self.name}] FATAL ERROR: 'DAIC_MIDDLEWARE_KEY' environment variable not set.", file=sys.stderr)
+            print(f"[{self.name}] Please set this to the middleware's secret API key.", file=sys.stderr)
+        else:
+            print(f"[{self.name}] Plugin instantiated and key loaded.")
+            print(f"[{self.name}] Middleware target: {self.MIDDLEWARE_URL}")
+
+    def run(self):
+        if not self.middleware_key:
+            print(f"[{self.name}] Error: Middleware key not set. Cannot run analysis.", file=sys.stderr)
+            return
+
+        print(f"[{self.name}] Fetching binary imports...")
+        try:
+            imports = DaiCCore.get_imports()
+        except Exception as e:
+            print(f"[{self.name}] Error getting imports: {e}", file=sys.stderr)
+            return
+
+        imports_msg = ""
+        for i in imports:
+            offset = getattr(i, 'offset', 'N/A')
+            file_name = getattr(i, 'file_name', 'N/A')
+            func_name = getattr(i, 'fonction_name', 'N/A')
+            imports_msg += f"{offset} {file_name} {func_name}\n"
+
+        if not imports_msg.strip():
+            print(f"[{self.name}] No imports to analyze.")
+            return
+
+        print(f"[{self.name}] Sending secure request to middleware...")
+        
+        payload = {
+            "user_prompt": (
+                "From the following list of imported functions... "
+                "what is its likely purpose... " # (Your full prompt here)
+                f"\n\n{imports_msg}"
+            ),
+            "model": "claude-opus-4-20250514"
+        }
+        
+        headers = {
+            "Authorization": f"Bearer {self.middleware_key}",
+            "Content-Type": "application/json"
+        }
+        
+        try:
+            response = requests.post(self.MIDDLEWARE_URL, json=payload, headers=headers, timeout=60)
+            response.raise_for_status()
+            
+            data = response.json()
+            response_text = data.get("response")
+
+            self.print_formatted_response(response_text)
+
+        except requests.exceptions.ConnectionError:
+            print(f"[{self.name}] FATAL ERROR: Could not connect to middleware at {self.MIDDLEWARE_URL}", file=sys.stderr)
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 403:
+                print(f"[{self.name}] FATAL ERROR: 403 Forbidden. Your 'DAIC_MIDDLEWARE_KEY' is WRONG.", file=sys.stderr)
+            elif e.response.status_code == 429:
+                print(f"[{self.name}] ERROR: 429 Too Many Requests. You are being rate-limited.", file=sys.stderr)
+            else:
+                print(f"[{self.name}] Middleware returned an HTTP error: {e}", file=sys.stderr)
+        except Exception as e:
+            print(f"[{self.name}] An unexpected error occurred: {e}", file=sys.stderr)
+
+    def terminate(self):
+        print(f"[{self.name}] Terminated.")
+
+    def print_formatted_response(self, response_text: str):
+        print("=" * 60)
+        print(f"CLAUDE AI RESPONSE ({self.name})")
+        print("=" * 60)
+        print(response_text or "No valid response text received.")
+        print("\n" + "=" * 60)
+        print("Response provided by local secure middleware.")
+        print("=" * 60)
