@@ -3,7 +3,7 @@
 #include <QObject>
 #include "Plugin.h"
 
-class ExampleCpp : public QObject, public Plugin {
+class Example : public QObject, public Plugin {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "com.DaiC.Plugin")
     Q_INTERFACES(Plugin)
@@ -12,9 +12,9 @@ public:
     void run() override;
     void terminate() override;
 
-    std::string name() const override { return "SamplePlugin"; }
-    std::string author() const override { return "xarkes"; }
-    std::string description() const override { return "Just a sample plugin."; }
+    std::string name() const override { return "Example"; }
+    std::string author() const override { return "DaiC Team"; }
+    std::string description() const override { return "Example Cpp Plugin"; }
     std::string version() const override { return "1.0"; }
 };
 

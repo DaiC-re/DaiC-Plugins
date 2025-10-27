@@ -4,20 +4,20 @@
 // #include <QAction>
 // #include <MainWindow.h>
 
-#include "ExampleCpp.hpp"
+#include "Example.hpp"
 #include <iostream>
 
-void ExampleCpp::terminate()
+void Example::terminate()
 {
     std::cout << name() << " Terminated cleanly." << std::endl;
 }
 
-void ExampleCpp::init()
+void Example::init()
 {
     std::cout << name() << "Initialized successfully!" << std::endl;
 }
 
-void ExampleCpp::run()
+void Example::run()
 {
     std::cout << "--- Plugin Information ---" << std::endl;
     std::cout << "Name:        " << name() << std::endl;
