@@ -50,8 +50,7 @@ class PythonInterpreter(DaiCCore.Plugin):
     version = "1.1.0"
     author = "Gemini & DaiC Team"
 
-    def __init__(self):
-        super().__init__()
+    def init(self):
         # --- Initialize Plugin State ---
         self.main_window = None
         self.dock_widget = None
@@ -66,7 +65,7 @@ class PythonInterpreter(DaiCCore.Plugin):
         self.command_history = []
         self.history_index = -1 # -1 indicates we are at the newest entry (not in history)
 
-    def init(self):
+    def run(self):
         """
         Initializes the plugin and creates the UI elements.
         
@@ -120,16 +119,9 @@ class PythonInterpreter(DaiCCore.Plugin):
         
         print(f"[{self.name}] Initialized successfully!")
 
-    def run(self):
-        """
-        Activates the plugin by showing the widget and redirecting output streams.
-        """
         if not self.dock_widget:
             print(f"[{self.name}] Cannot run, plugin was not initialized correctly.")
             return
-
-        # Make the dock widget visible
-        self.dock_widget.show()
         
         # Redirect stdout and stderr to our custom QtStream
         qt_stream = QtStream(self.output_console)
