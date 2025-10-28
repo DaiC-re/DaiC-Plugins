@@ -2,6 +2,9 @@ import DaiCCore
 import requests
 import sys
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class BinarySummary(DaiCCore.Plugin):
     """
@@ -15,31 +18,30 @@ class BinarySummary(DaiCCore.Plugin):
     version = "2.0.0"
     author = "DaiC Team"
 
-    MIDDLEWARE_URL = "http://daic.re/ask-claude/analyze-binary/"
+    # MIDDLEWARE_URL = "https://daic.re/ask-claude/analyze-binary/"
+    MIDDLEWARE_URL = "https://daic.re/ask-claude/analyze-binary"
     
-    def __init__(self):
-        super().__init__()
-
     def init(self):
         self.middleware_key = os.environ.get("DAIC_MIDDLEWARE_KEY")
 
         if not self.middleware_key:
-            print(f"[{self.name}] FATAL ERROR: 'DAIC_MIDDLEWARE_KEY' environment variable not set.", file=sys.stderr)
-            print(f"[{self.name}] Please set this to the middleware's secret API key.", file=sys.stderr)
+            # print(f"[{self.name}] FATAL ERROR: 'DAIC_MIDDLEWARE_KEY' environment variable not set.", file=sys.stderr)
+            # print(f"[{self.name}] Please set this to the middleware's secret API key.", file=sys.stderr)
+            raise AssertionError("FATAL ERROR: 'DAIC_MIDDLEWARE_KEY' environment variable not set.")
         else:
-            print(f"[{self.name}] Plugin instantiated and key loaded.")
-            print(f"[{self.name}] Middleware target: {self.MIDDLEWARE_URL}")
+            self.log("Plugin instantiated and key loaded.")
+            self.log(f"Middleware target: {self.MIDDLEWARE_URL}")
 
     def run(self):
         if not self.middleware_key:
-            print(f"[{self.name}] Error: Middleware key not set. Cannot run analysis.", file=sys.stderr)
+            self.log("Error: Middleware key not set. Cannot run analysis.")
             return
 
-        print(f"[{self.name}] Fetching binary imports...")
+        self.log("Fetching binary imports...")
         try:
             imports = DaiCCore.get_imports()
         except Exception as e:
-            print(f"[{self.name}] Error getting imports: {e}", file=sys.stderr)
+            self.log(f"Error getting imports: {e}")
             return
 
         imports_msg = ""
@@ -50,18 +52,27 @@ class BinarySummary(DaiCCore.Plugin):
             imports_msg += f"{offset} {file_name} {func_name}\n"
 
         if not imports_msg.strip():
-            print(f"[{self.name}] No imports to analyze.")
+            self.log("No imports to analyze.")
             return
 
-        print(f"[{self.name}] Sending secure request to middleware...")
+        self.log("Sending secure request to middleware...")
         
+        # user_prompt = (
+        #     "From the following list of imported functions by a binary "
+        #     "(formatted as: offset, file_name, function_name), "
+        #     "can you please analyze them and provide information on this binary? "
+        #     "Specifically, what is its likely purpose (e.g., utility, malware, system component), "
+        #     "what are its key capabilities, and are there any suspicious imports?\n\n"
+        #     f"{imports_msg}"
+        # )
+        #
+        # system_prompt = (
+        #     "You are an expert in reverse engineering and binary analysis. "
+        #     "You provide clear, concise, and actionable insights based on import tables."
+        # )
+        #
         payload = {
-            "user_prompt": (
-                "From the following list of imported functions... "
-                "what is its likely purpose... " # (Your full prompt here)
-                f"\n\n{imports_msg}"
-            ),
-            "model": "claude-opus-4-20250514"
+            "imports": imports_msg,
         }
         
         headers = {
@@ -72,32 +83,33 @@ class BinarySummary(DaiCCore.Plugin):
         try:
             response = requests.post(self.MIDDLEWARE_URL, json=payload, headers=headers, timeout=60)
             response.raise_for_status()
-            
             data = response.json()
             response_text = data.get("response")
-
             self.print_formatted_response(response_text)
 
         except requests.exceptions.ConnectionError:
-            print(f"[{self.name}] FATAL ERROR: Could not connect to middleware at {self.MIDDLEWARE_URL}", file=sys.stderr)
+            self.log(f"FATAL ERROR: Could not connect to middleware at {self.MIDDLEWARE_URL}")
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 403:
-                print(f"[{self.name}] FATAL ERROR: 403 Forbidden. Your 'DAIC_MIDDLEWARE_KEY' is WRONG.", file=sys.stderr)
+                self.log("FATAL ERROR: 403 Forbidden. Your 'DAIC_MIDDLEWARE_KEY' is WRONG.")
             elif e.response.status_code == 429:
-                print(f"[{self.name}] ERROR: 429 Too Many Requests. You are being rate-limited.", file=sys.stderr)
+                self.log("ERROR: 429 Too Many Requests. You are being rate-limited.")
             else:
-                print(f"[{self.name}] Middleware returned an HTTP error: {e}", file=sys.stderr)
+                self.log(f"Middleware returned an HTTP error: {e}")
         except Exception as e:
-            print(f"[{self.name}] An unexpected error occurred: {e}", file=sys.stderr)
+            self.log(f"An unexpected error occurred: {e}")
 
     def terminate(self):
-        print(f"[{self.name}] Terminated.")
+        self.log("Terminated.")
 
     def print_formatted_response(self, response_text: str):
         print("=" * 60)
-        print(f"CLAUDE AI RESPONSE ({self.name})")
+        print(f"AI RESPONSE ({self.name})")
         print("=" * 60)
         print(response_text or "No valid response text received.")
         print("\n" + "=" * 60)
-        print("Response provided by local secure middleware.")
+        print("End of the response.")
         print("=" * 60)
+
+    def log(self, message):
+        print(f"[{self.name}] {message}", file=sys.stderr)
