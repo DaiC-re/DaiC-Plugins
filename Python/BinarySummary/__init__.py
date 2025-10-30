@@ -55,7 +55,7 @@ class BinarySummary(DaiCCore.Plugin):
             self.log("No imports to analyze.")
             return
 
-        self.log("Sending secure request to middleware...")
+        self.log("Sending secure request to middleware... (It can take a moment depending of the binary.)")
         
         # user_prompt = (
         #     "From the following list of imported functions by a binary "
@@ -103,13 +103,22 @@ class BinarySummary(DaiCCore.Plugin):
         self.log("Terminated.")
 
     def print_formatted_response(self, response_text: str):
-        print("=" * 60)
-        print(f"AI RESPONSE ({self.name})")
-        print("=" * 60)
-        print(response_text or "No valid response text received.")
-        print("\n" + "=" * 60)
-        print("End of the response.")
-        print("=" * 60)
+        # print("=" * 60)
+        # print(f"AI RESPONSE ({self.name})")
+        # print("=" * 60)
+        # print(response_text or "No valid response text received.")
+        # print("\n" + "=" * 60)
+        # print("End of the response.")
+        # print("=" * 60)
+        msg = ""
+        msg += "=" * 60
+        msg += f"AI RESPONSE ({self.name})"
+        msg += "=" * 60
+        msg += response_text or "No valid response text received."
+        msg += "\n" + "=" * 60
+        msg += "End of the response."
+        msg += "=" * 60
+        DaiCCore.print_dialog(msg)
 
     def log(self, message):
         print(f"[{self.name}] {message}", file=sys.stderr)
