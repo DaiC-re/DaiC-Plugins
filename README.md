@@ -19,21 +19,19 @@ We use our Python and C++ API for the creation of those plugins, you can have an
 
 ### Plugins:
 
-#### Cpp:
-- [Example](https://github.com/DaiC-re/DaiC-Plugins/tree/main/Cpp/Example): Example plugins which extracts binary informations
-
-#### Python:
-- [AiAPI](https://github.com/DaiC-re/DaiC-Plugins/tree/main/Python/AiApi): Call distant llm providers
-- [AiChat](https://github.com/DaiC-re/DaiC-Plugins/tree/main/Python/AiChat): Prototype to chat with Llama_cpp model
-- [AiDaic](https://github.com/DaiC-re/DaiC-Plugins/tree/main/Python/AiDaiC): Load multiples backend for decompilation
-- [AiDecompile](https://github.com/DaiC-re/DaiC-Plugins/tree/main/Python/AiDecompile): Decompile assembly code
-- [BinarySummary](https://github.com/DaiC-re/DaiC-Plugins/tree/main/Python/BinarySummary): Give an overview of an binary using imports and secure Claude middleware
-- [Debug](https://github.com/DaiC-re/DaiC-Plugins/blob/main/Python/Debug): Debug plugin that loads a python interactive shell, used by others plugins for debugging
-- [Example](https://github.com/DaiC-re/DaiC-Plugins/blob/main/Python/Example): Simple plugin example which loads binary informations
-- [HttpApi](https://github.com/DaiC-re/DaiC-Plugins/tree/main/Python/HttpApi): Prototype which creates an python http API within a plugin
-- [MCPServer](https://github.com/DaiC-re/DaiC-Plugins/blob/main/Python/MCPServer): MCPServer that expose DaiCCore functions
-- [PythonInterpreter](https://github.com/DaiC-re/DaiC-Plugins/blob/main/Python/PythonInterpreter): Opens a window with an python interpreter
-
+| Name | Description | Language | Status |
+| :--- | :--- | :--- | :--- |
+| **[Example](https://github.com/DaiC-re/DaiC-Plugins/tree/main/Cpp/Example)** | Example plugins which extracts binary informations | C++ | Example |
+| **[AiAPI](https://github.com/DaiC-re/DaiC-Plugins/tree/main/Python/AiApi)** | Call distant llm providers | Python | - |
+| **[AiChat](https://github.com/DaiC-re/DaiC-Plugins/tree/main/Python/AiChat)** | Prototype to chat with Llama_cpp model | Python | - |
+| **[AiDaic](https://github.com/DaiC-re/DaiC-Plugins/tree/main/Python/AiDaiC)** | Load multiples backend for decompilation | Python | - |
+| **[AiDecompile](https://github.com/DaiC-re/DaiC-Plugins/tree/main/Python/AiDecompile)** | Decompile assembly code | Python | - |
+| **[BinarySummary](https://github.com/DaiC-re/DaiC-Plugins/tree/main/Python/BinarySummary)** | Give an overview of an binary using imports and secure Claude middleware | Python | Maintained |
+| **[Debug](https://github.com/DaiC-re/DaiC-Plugins/blob/main/Python/Debug)** | Debug plugin that loads a python interactive shell, used by others plugins for debugging | Python | - |
+| **[Example](https://github.com/DaiC-re/DaiC-Plugins/blob/main/Python/Example)** | Simple plugin example which loads binary informations | Python | Example |
+| **[HttpApi](https://github.com/DaiC-re/DaiC-Plugins/tree/main/Python/HttpApi)** | Prototype which creates an python http API within a plugin | Python | - |
+| **[MCPServer](https://github.com/DaiC-re/DaiC-Plugins/blob/main/Python/MCPServer)** | MCPServer that expose DaiCCore functions | Python | - |
+| **[PythonInterpreter](https://github.com/DaiC-re/DaiC-Plugins/blob/main/Python/PythonInterpreter)** | Opens a window with an python interpreter | Python | Maintained |
 
 
 ### License:
